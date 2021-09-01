@@ -6,6 +6,8 @@
 
 A collection of API clients that I have built for various projects, but not really needed in as an R package.
 
+**Note**: These scripts are not affiliated with any of the following projects in any capacity nor are they intended as the official method clients. I built these for specific projects or workflows to help manage data, but I never intended them to go further than that. These scripts could be useful &mdash; or a starting point &mdash; for others working on similar projects.
+
 ## Available Api Clients
 
 The following sections provide an overview of the available scripts located in `R/`.
@@ -25,8 +27,6 @@ saveRDS(g$data, "grid_data.RDS")
 ```
 
 *See file `R/grid_ac.R`*
-
-**Note**: This isn't affiliated with the GRID.ac project in anyway.
 
 ### Pubmed
 
