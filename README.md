@@ -4,7 +4,7 @@
 
 # random-api
 
-A collection of API clients that I have built for various projects, but not really needed in as an R package.
+A collection of API clients that I have built for various projects, but not really needed in as an R or Python package.
 
 **Note**:
 
@@ -12,7 +12,20 @@ These scripts are not affiliated with any of the following projects in any capac
 
 ## Available Api Clients
 
-The following sections provide an overview of the available scripts located in `R/`.
+The following sections provide an overview of the available scripts.
+
+### Github Release Download
+
+Download a release from a publically available GitHub repository.
+
+```python
+import ghReleaseDownloader
+gh = ghReleaseDownloader(owner = "<github_user>", repo = "<github_user_repo>")
+gh.listReleases()
+gh.downloadRelease(outDir = 'downloads/', tag_name = 'latest')
+```
+
+*See file `python/ghReleaseDownloader.py`*
 
 ### Grid.ac
 
