@@ -2,7 +2,7 @@
 #' FILE: ghReleaseDownloader.py
 #' AUTHOR: David Ruvolo
 #' CREATED: 2021-09-10
-#' MODIFIED: 2021-09-10
+#' MODIFIED: 2021-10-02
 #' PURPOSE: Find and download release from a Github repo
 #' STATUS: working
 #' PACKAGES: os, requests, datatable, datetime, tarfile
@@ -18,14 +18,20 @@
 
 import os
 import requests
-import datatable as dt
-from datatable import f
+from datatable import dt, f
 from datetime import datetime
 import tarfile
 
-# @name ghReleaseDownloader
-# @description Find releases and download them
+
 class ghReleaseDownloader:
+    """GitHub Release Download
+
+    View and download a release of a pubically available GitHub repository
+
+    @param owner (str) : the GitHub username
+    @param repo  (str) : the repository name
+
+    """
     def __init__(self, owner: str = None, repo: str = None):
         self.releases = []
         self.gh_host = 'https://api.github.com'
@@ -36,6 +42,9 @@ class ghReleaseDownloader:
         self.__build__release__url__()
         
     def __build__release__url__(self):
+        """Build Url
+        Build endpoint when owner and repo are supplied
+        """
         self.gh_endpoint_release = '{}/repos/{}/{}/releases'.format(
             self.gh_host,
             self.gh_owner,
@@ -43,22 +52,41 @@ class ghReleaseDownloader:
         )
 
     def __print__releases(self):
+        """Print Release Overview
+
+        Print all available releases 
+
+        """
         print(self.releases[:, ['id', 'name', 'tag_name', 'published_at']])
-        
+
+
     def __format__date(self, date):
+        """Format Date
+
+        Return date as yyyy-mm-dd
+
+        @param date (date) : datetime object
+
+        @return date
+        """
         if not date:
             return None
         return datetime.strptime(str(date), '%Y-%m-%dT%H:%M:%SZ').date()
     
-    #' @name listReleases
-    #' @description List current HPO releases (tagged as an release)
-    #' @param per_page number of results per page (default: 30)
-    #' @param page page number of results to fetch (default: 1)
-    #' @reference
-    #' \url{https://docs.github.com/en/rest/reference/repos#releases}
-    #' @return response code or json object
+
     def listReleases(self, per_page: int = 30, page: int = 1):
+        """List Available Releases
         
+        List current releases (tagged as an release)
+
+        @param per_page (int) : the number of results per page (default: 30)
+        @param page     (int) : the page number of results to fetch (default: 1)
+
+        @reference
+        \url{https://docs.github.com/en/rest/reference/repos#releases}
+        @return response code or json object
+        """
+
         # if releases dataset has not been built, then fetch information
         if not self.releases:
             headers = self.gh_default_header
@@ -89,19 +117,23 @@ class ghReleaseDownloader:
         # otherwise print dataset
         self.__print__releases()
         
-    #' @name downloadRelease
-    #' @description Download a release by tag_name
-    #' @param tag_name release tag name (use listReleases)
-    #' @return
-    def downloadRelease(self, outDir: str = '.', tag_name: str = "latest"):
+    
+    def downloadRelease(self, outDir: str = '.', tagName: str = "latest"):
+        """Download Release
+
+        Download a release by `tag_name`
+
+        @param outDir  (str) : path to download and extract contents
+        @param tagName (str) : release tag (default: 'latest')
+        
+        """
         dir = os.path.abspath(outDir)
         
-        release = tag_name
+        release = tagName
         if release == "latest":
             release = self.releases[0, ['tag_name']].to_dict()['tag_name'][0]
         
         url = self.releases[f.tag_name == release, :].to_dict()['tarball_url'][0]
-        path = dir + '/' + os.path.basename(url) + '.tar.gz'
         try:
             print('Downloading Release: {}\nTrying: {}'.format(release, url))
             resp = requests.get(url, headers = self.gh_default_header, stream = True)
